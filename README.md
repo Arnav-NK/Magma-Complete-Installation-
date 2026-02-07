@@ -57,12 +57,16 @@ This guide documents the **exact process** to successfully deploy Magma Core, in
 
 ## 🛠️ Step-by-Step Installation
 
+
 ### Step 1: Host OS Preparation
+
 1.  Dual boot your system to **Ubuntu 20.04 LTS**.
 2.  Ensure system updates are enabled.
     > ⚠️ **Warning:** Ubuntu 20.04 is strongly recommended for compatibility. Newer versions may cause dependency issues.
 
+
 ### Step 2: Install Host Tools
+
 Run the following commands on your host Ubuntu system to verify installations:
 
 ```bash
@@ -70,34 +74,47 @@ docker --version
 docker compose version
 virtualbox --help
 ```
+
+
 ### Step 3: Create Virtual Machines
+
 Virtual Machines in VirtualBox with the following specifications:
 1. Orc8r + NMS 4 GB (Min) 40GB  Ubuntu 20.04
 2. VM 3AGW 4 GB 30 GB Ubuntu 20.04
-### Step 4: Network Configuration (Critical)
-For EACH VM,
 
+   
+### Step 4: Network Configuration (Critical)
+
+For EACH VM,/
 configure two network adapters. This is mandatory for Orc8r–AGW communication.
 ```
 Adapter 1 (Primary): Bridged Adapter OR Static Wi-Fi Configure via GUI
 Adapter 2 (Secondary): NAT this will be used to update and install requirmenet's.
 ```
+
 ### Step 5: Clone RepositoryOn the Host Machine:
+
 Fork the Magma repository to your GitHub account.Clone and configure upstream:Bashgit clone [https://github.com/YOUR_USERNAME/magma.git](https://github.com/YOUR_USERNAME/magma.git)
 ```bash
 cd magma
 git remote add upstream https://github.com/magma/magma.git
 git remote -v
 ```
+
+
 ## ☁️ Orc8r & NMS Setup (VM 1)
+
 ### Step 6: System Update & Prerequisites (Inside the Orc8r VM)
 
 ```Bash
 sudo apt update
 sudo apt upgrade -y
 ```
+
 ## Install Docker, Docker Compose, Python3, and Git
+
 ### Step 7: Fix Fluentd Ruby Gem Compatibility (CRITICAL): 
+
 Without this fix, the Orc8r build WILL FAIL.Navigate to the docker directory:
 ```Bash
 cd magma/orc8r/cloud/docker/fluentd
@@ -115,6 +132,8 @@ USER root
   gem install fluent-plugin-multi-format-parser -v 1.0.0 --no-document
 USER fluent
 ```
+
+
 ### Step 8: Build and run Orc8r ImagesBashcd magma/orc8r/cloud/docker
 ```
 ./build.py --all
@@ -122,20 +141,27 @@ USER fluent
 ```
 Wait for the build to complete successfully.
 
+
+
 ### Step 9: Build & Run NMS 
+
 ``` bash
 cd ../../../nms
 COMPOSE_PROJECT_NAME=magmalte docker compose --compatibility build magmalte
 docker compose --compatibility up -d
 ```
 
+
 ### Step 10: Set Admin Password (for the first time next time)
+
 ```Bash
 docker compose exec magmalte \
 yarn setAdminPassword host admin@magma.test password1234
 ```
 
+
 ### Step 11: Access Portal
+
 Host Portal: [http://host.localhost:8081/](http://host.localhost:8081/)
 
 hostLogin: admin@magma.test / password1234
@@ -149,7 +175,9 @@ with a super user and give acess to all internet
 
 sudo vim /var/opt/magma/certs/rootCA.pem
 
+
 ### Step 12: copy root Certificate from Orc8r to AGW
+
 **Note:**  I am using SSH 
 ```
 # Locate Root CA on Orc8r VM
@@ -176,14 +204,19 @@ ls -l /var/opt/magma/certs/rootCA.pem
 
 
 ## Install AGW on VM2
+
 ### Step 13: Download 
+
 ```
 wget https://github.com/magma/magma/raw/v1.8/lte/gateway/deploy/agw_install_docker.sh
 agw_install_docker.sh # require docker Compose
  ```
 Reboot the VM when prompted.
 
+
+
 ### Step 15: Configure Hostname ResolutionEdit
+
 ``` /etc/hosts```
 on the AGW VM to point to your Orc8r IP: 
 ```
@@ -197,7 +230,9 @@ Add the following lines:
 ⚠️ Certificates strictly require .
 magma.test domains.
 
+
 ### Step 16: Configure Control ProxyCreate 
+
 the config file:
 ``` Bash
 sudo nano /var/opt/magma/configs/control_proxy.yml
@@ -213,14 +248,21 @@ fluentd_port: 24224
 rootca_cert: /var/opt/magma/certs/rootCA.pem
 
 ```
+
+
 ### Step 17: Start AGW Services
+
 ``` Bash
 cd 
 /var/opt/magma/docker
 sudo docker compose up -d
 ```
+
+
 ### 🔗 Integration & Verification 
+
 ### Step 18:Register AGW with Orc8rGet Hardware ID (On AGW VM):
+
 ```Bash
 docker exec magmad show_gateway_info.py
 ```
@@ -229,7 +271,10 @@ Register (On NMS UI):
 Go to Equipment -> Add Gateway.Paste the ID and Key.
 Restart AGW (On AGW VM):
 ``` sudo docker compose up -d --force-recreate```
+
+
 ### Step 19: Final Health CheckRun the check-in CLI on the AGW VM:
+
 ```Bash
 sudo docker exec magmad checkin_cli.py
 ```
