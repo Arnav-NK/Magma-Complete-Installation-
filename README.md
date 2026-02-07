@@ -5,8 +5,6 @@
 
 This guide documents the **exact process** to successfully deploy Magma Core, including the Orchestrator (Orc8r), Network Management System (NMS), and Access Gateway (AGW). 
 
-> **Note:** This guide includes specific fixes (such as the Fluentd Ruby Gem patch) and network configurations that are not fully detailed in the official documentation.
-
 ---
 
 ## 📋 Prerequisites
@@ -42,11 +40,12 @@ virtualbox --help
 ```
 ### Step 3: Create Virtual MachinesCreate three
 Virtual Machines in VirtualBox with the following specifications:
-1. Orc8r + NMS 5 GB (Min) 45GB  Ubuntu 20.04
+1. Orc8r + NMS 4 GB (Min) 40GB  Ubuntu 20.04
 2. VM 3AGW 4 GB 30 GB Ubuntu 20.04
 ### Step 4: Network Configuration (Critical)
 For EACH VM, 
-configure two network adapters. This is mandatory for Orc8r–AGW communication.Adapter 1 (Primary): Bridged Adapter OR Static Wi-FiConfigure via GUI → Wired Connection settings inside VM to ensure internet access.
+configure two network adapters. This is mandatory for Orc8r–AGW communication.
+Adapter 1 (Primary): Bridged Adapter OR Static Wi-FiConfigure via GUI → Wired Connection settings inside VM to ensure internet access.
 Adapter 2 (Secondary): NAT
 ### Step 5: Clone RepositoryOn the Host Machine:
 Fork the Magma repository to your GitHub account.Clone and configure upstream:Bashgit clone [https://github.com/YOUR_USERNAME/magma.git](https://github.com/YOUR_USERNAME/magma.git)
@@ -55,7 +54,7 @@ cd magma
 git remote add upstream https://github.com/magma/magma.git
 git remote -v
 ```
-# ☁️ Orc8r & NMS Setup (VM 1)
+## ☁️ Orc8r & NMS Setup (VM 1)
 ### Step 6: System Update & PrerequisitesInside the Orc8r VM:
 
 ```Bash
@@ -111,8 +110,9 @@ Action: Create Organization (magma test1) with a super user and give acess to al
         id :super@magma.test password: password1234
 
 sudo vim /var/opt/magma/certs/rootCA.pem
+
 ### Step 12: copy root Certificate from Orc8r to AGW
-Note : I am using SSH 
+**Note:**  I am using SSH 
 ```
 # Locate Root CA on Orc8r VM
 ls magma/.cache/test_certs/rootCA.pem
@@ -134,10 +134,12 @@ sudo chmod 644 /var/opt/magma/certs/rootCA.pem
 # Verify
 ls -l /var/opt/magma/certs/rootCA.pem
 ```
+**Note:** certificates must be in /var/opt/magma/certs/rootCA.pem
 
-### Step 13: Install AGW
+
+## Install AGW on VM2
+### Step 13: Download 
 ```
-Bash
 wget https://github.com/magma/magma/raw/v1.8/lte/gateway/deploy/agw_install_docker.sh
 agw_install_docker.sh # require docker Compose
  ```
@@ -175,8 +177,8 @@ cd
 /var/opt/magma/docker
 sudo docker compose up -d
 ```
-### 🔗 Integration & VerificationStep 18: 
-Register AGW with Orc8rGet Hardware ID (On AGW VM):
+### 🔗 Integration & Verification 
+## Step 18:Register AGW with Orc8rGet Hardware ID (On AGW VM):
 ```Bash
 docker exec magmad show_gateway_info.py
 ```
@@ -190,3 +192,33 @@ Restart AGW (On AGW VM):
 sudo docker exec magmad checkin_cli.py
 ```
 ✅ Success: If the output indicates a successful check-in, your Magma deployment is fully operational.
+
+
+### Optional Step 20 : Start Prometheus and Grafana for Metrics
+If you want to monitor metrics, start Prometheus and Grafana with:
+
+```
+docker-compose -f docker-compose.metrics.yml up -d
+```
+You might need to add this snippet to the bottom of docker-compose.metrics.yml to connect to the correct network:
+```
+networks:
+  default:
+    external:
+      name: orc8r_default
+```
+
+
+## Links 
+
+NMS UI	[http://host.localhost:8081/host](http://host.localhost:8081/host)
+ID: admin@magma.test
+Password: password1234
+
+Organization: magma test1   
+ID: super@magma.test
+Password: password1234
+
+Orc8r Swagger	[https://localhost:9443/swagger/v1/ui](https://localhost:9443/swagger/v1/ui)
+Promethius: [http://localhost:9090](http://localhost:9090)
+
