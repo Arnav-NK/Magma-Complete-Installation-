@@ -296,6 +296,25 @@ networks:
       name: orc8r_default
 ```
 
+## Second time starting
+VM1 Orc8r + NMS
+```
+cd orc8r/cloud/docker 
+./run.py --metrics
+
+cd ../../../nms 
+docker compose --compatibility up -d
+
+Metrics (optional)
+docker compose -f docker-compose.metrics.yml up -d
+sudo docker exec magmad checkin_cli.py
+```
+
+VM2 AcessGateWay
+```
+cd /var/opt/magma/docker
+sudo docker compose up -d
+```
 
 ## Links 
 
