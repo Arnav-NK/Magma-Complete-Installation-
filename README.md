@@ -1,11 +1,15 @@
 # Magma Core Installation Guide: Orc8r + NMS + AGW
-### (Local Deployment)
+### (Local Deployment using Virtual box and docker)
 
 ![Ubuntu](https://img.shields.io/badge/OS-Ubuntu_20.04-orange) ![Docker](https://img.shields.io/badge/Container-Docker-blue) ![Status](https://img.shields.io/badge/Status-Tested-success)
 
 This guide documents the **exact process** to successfully deploy Magma Core, including the Orchestrator (Orc8r), Network Management System (NMS), and Access Gateway (AGW). 
 
----
+<br>
+<br>
+<br>
+
+
 ## Index
 
 1. [Introduction](#magma-core-installation-guide-orc8r--nms--agw)
@@ -38,6 +42,10 @@ This guide documents the **exact process** to successfully deploy Magma Core, in
 9. [Links](#links)
 10. [Resources](#resources)
 
+
+<br>
+<br>
+<br>
 
 ## 📋 Prerequisites
 
@@ -296,6 +304,10 @@ networks:
       name: orc8r_default
 ```
 
+<br>
+<br>
+
+
 ## Second time starting
 VM1 Orc8r + NMS
 ```
@@ -315,6 +327,8 @@ VM2 AcessGateWay
 cd /var/opt/magma/docker
 sudo docker compose up -d
 ```
+<br>
+<br>
 
 ## Links 
 
@@ -332,6 +346,9 @@ Password: password1234
 
 Orc8r Swagger	[https://localhost:9443/swagger/v1/ui](https://localhost:9443/swagger/v1/ui)
 Promethius: [http://localhost:9090](http://localhost:9090)
+
+<br>
+<br>
 
 ## Resources 
 
