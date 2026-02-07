@@ -281,7 +281,7 @@ sudo docker exec magmad checkin_cli.py
 ✅ Success: If the output indicates a successful check-in, your Magma deployment is fully operational.
 
 
-### Optional Step 20 : Start Prometheus and Grafana for Metrics\
+### Optional Step 20 : Start Prometheus and Grafana for Metrics
 
 If you want to monitor metrics, start Prometheus and Grafana with:
 
