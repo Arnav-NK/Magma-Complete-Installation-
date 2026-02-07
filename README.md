@@ -6,6 +6,38 @@
 This guide documents the **exact process** to successfully deploy Magma Core, including the Orchestrator (Orc8r), Network Management System (NMS), and Access Gateway (AGW). 
 
 ---
+## Index
+
+1. [Introduction](#magma-core-installation-guide-orc8r--nms--agw)
+2. [Prerequisites](#-prerequisites)
+   - [Hardware Requirements](#hardware-requirements)
+   - [Software Requirements](#software-requirements-host)
+3. [Step-by-Step Installation](#-step-by-step-installation)
+   - [Step 1: Host OS Preparation](#step-1-host-os-preparation)
+   - [Step 2: Install Host Tools](#step-2-install-host-tools)
+   - [Step 3: Create Virtual Machines](#step-3-create-virtual-machines)
+   - [Step 4: Network Configuration](#step-4-network-configuration-critical)
+   - [Step 5: Clone Repository](#step-5-clone-repositoryon-the-host-machine)
+4. [Orc8r & NMS Setup (VM 1)](#-orc8r--nms-setup-vm-1)
+   - [Step 6: System Update & Prerequisites](#step-6-system-update--prerequisites-inside-the-orc8r-vm)
+   - [Step 7: Fix Fluentd Ruby Gem Compatibility](#step-7-fix-fluentd-ruby-gem-compatibility-critical)
+   - [Step 8: Build and Run Orc8r](#step-8-build-and-run-orc8r-imagesbashcd-magmaorc8rclouddocker)
+   - [Step 9: Build & Run NMS](#step-9-build--run-nms)
+   - [Step 10: Set Admin Password](#step-10-set-admin-password-for-the-first-time-next-time)
+   - [Step 11: Access Portal](#step-11-access-portal)
+5. [Copy Root Certificate](#step-12-copy-root-certificate-from-orc8r-to-agw)
+6. [Install AGW on VM2](#install-agw-on-vm2)
+   - [Step 13: Download](#step-13-download)
+   - [Step 15: Configure Hostname Resolution](#step-15-configure-hostname-resolutionedit)
+   - [Step 16: Configure Control Proxy](#step-16-configure-control-proxycreate)
+   - [Step 17: Start AGW Services](#step-17-start-agw-services)
+7. [Integration & Verification](#-integration--verification)
+   - [Step 18: Register AGW with Orc8r](#step-18register-agw-with-orc8rget-hardware-id-on-agw-vm)
+   - [Step 19: Final Health Check](#step-19-final-health-checkrun-the-check-in-cli-on-the-agw-vm)
+8. [Monitoring (Optional)](#optional-step-20--start-prometheus-and-grafana-for-metrics)
+9. [Links](#links)
+10. [Resources](#resources)
+
 
 ## 📋 Prerequisites
 
@@ -38,7 +70,7 @@ docker --version
 docker compose version
 virtualbox --help
 ```
-### Step 3: Create Virtual MachinesCreate three
+### Step 3: Create Virtual Machines
 Virtual Machines in VirtualBox with the following specifications:
 1. Orc8r + NMS 4 GB (Min) 40GB  Ubuntu 20.04
 2. VM 3AGW 4 GB 30 GB Ubuntu 20.04
@@ -58,7 +90,7 @@ git remote add upstream https://github.com/magma/magma.git
 git remote -v
 ```
 ## ☁️ Orc8r & NMS Setup (VM 1)
-### Step 6: System Update & PrerequisitesInside the Orc8r VM:
+### Step 6: System Update & Prerequisites (Inside the Orc8r VM)
 
 ```Bash
 sudo apt update
@@ -104,12 +136,15 @@ yarn setAdminPassword host admin@magma.test password1234
 ```
 
 ### Step 11: Access Portal
-Host Portal:
-http://host.localhost:8081/
+Host Portal: [http://host.localhost:8081/](http://host.localhost:8081/)
+
 hostLogin: admin@magma.test / password1234
 
-Action: Create Organization (magma test1) with a super user and give acess to all internet 
-        now create a super user in it with 
+Action: Create Organization (magma test1) 
+with a super user and give acess to all internet 
+
+        now create a super user in it with
+        
         id :super@magma.test password: password1234
 
 sudo vim /var/opt/magma/certs/rootCA.pem
@@ -234,3 +269,14 @@ Password: password1234
 Orc8r Swagger	[https://localhost:9443/swagger/v1/ui](https://localhost:9443/swagger/v1/ui)
 Promethius: [http://localhost:9090](http://localhost:9090)
 
+## Resources 
+
+Official Magma Documentation – Magma basics and introduction
+https://magma.github.io/magma/docs/basics/introduction.html
+
+Kidus’ Beginner-Friendly Guide – Git and Docker workflow for contributing to Magma’s NMS
+https://medium.com/@pauloskidus48/a-beginner-friendly-git-and-docker-workflow-for-contributing-to-magmas-nms-fba541eb8443
+
+Patrick’s Magma AGW Docker & VM Setup Guide – Step-by-step setup instructions
+https://github.com/patricktomlin/magma-agw-docker-vm-guide/tree/main
+                    
