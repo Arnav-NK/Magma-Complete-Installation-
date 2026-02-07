@@ -43,10 +43,13 @@ Virtual Machines in VirtualBox with the following specifications:
 1. Orc8r + NMS 4 GB (Min) 40GB  Ubuntu 20.04
 2. VM 3AGW 4 GB 30 GB Ubuntu 20.04
 ### Step 4: Network Configuration (Critical)
-For EACH VM, 
+For EACH VM,
+
 configure two network adapters. This is mandatory for Orc8r–AGW communication.
-Adapter 1 (Primary): Bridged Adapter OR Static Wi-FiConfigure via GUI → Wired Connection settings inside VM to ensure internet access.
-Adapter 2 (Secondary): NAT
+```
+Adapter 1 (Primary): Bridged Adapter OR Static Wi-Fi Configure via GUI
+Adapter 2 (Secondary): NAT this will be used to update and install requirmenet's.
+```
 ### Step 5: Clone RepositoryOn the Host Machine:
 Fork the Magma repository to your GitHub account.Clone and configure upstream:Bashgit clone [https://github.com/YOUR_USERNAME/magma.git](https://github.com/YOUR_USERNAME/magma.git)
 ```bash
@@ -163,13 +166,17 @@ magma.test domains.
 the config file:
 ``` Bash
 sudo nano /var/opt/magma/configs/control_proxy.yml
-Paste the following configuration:YAMLcloud_address: controller.magma.test
+```
+Paste the following configuration:
+```
+YAMLcloud_address: controller.magma.test
 cloud_port: 7443
 bootstrap_address: bootstrapper-controller.magma.test
 bootstrap_port: 7444
 fluentd_address: controller.magma.test
 fluentd_port: 24224
 rootca_cert: /var/opt/magma/certs/rootCA.pem
+
 ```
 ### Step 17: Start AGW Services
 ``` Bash
@@ -178,7 +185,7 @@ cd
 sudo docker compose up -d
 ```
 ### 🔗 Integration & Verification 
-## Step 18:Register AGW with Orc8rGet Hardware ID (On AGW VM):
+### Step 18:Register AGW with Orc8rGet Hardware ID (On AGW VM):
 ```Bash
 docker exec magmad show_gateway_info.py
 ```
@@ -194,7 +201,8 @@ sudo docker exec magmad checkin_cli.py
 ✅ Success: If the output indicates a successful check-in, your Magma deployment is fully operational.
 
 
-### Optional Step 20 : Start Prometheus and Grafana for Metrics
+### Optional Step 20 : Start Prometheus and Grafana for Metrics\
+
 If you want to monitor metrics, start Prometheus and Grafana with:
 
 ```
@@ -212,12 +220,16 @@ networks:
 ## Links 
 
 NMS UI	[http://host.localhost:8081/host](http://host.localhost:8081/host)
+```
 ID: admin@magma.test
 Password: password1234
+```
 
+```
 Organization: magma test1   
 ID: super@magma.test
 Password: password1234
+```
 
 Orc8r Swagger	[https://localhost:9443/swagger/v1/ui](https://localhost:9443/swagger/v1/ui)
 Promethius: [http://localhost:9090](http://localhost:9090)
